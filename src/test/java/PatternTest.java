@@ -1,31 +1,42 @@
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.*;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
-        import com.codeborne.selenide.Condition;
-        import com.codeborne.selenide.Selenide;
-        import com.codeborne.selenide.logevents.SelenideLogger;
-        import io.qameta.allure.selenide.AllureSelenide;
-        import org.junit.jupiter.api.*;
-        import org.openqa.selenium.Keys;
+import java.time.Duration;
 
-        import java.time.Duration;
-        import java.util.Locale;
-
-        import static com.codeborne.selenide.Condition.*;
-        import static com.codeborne.selenide.Selectors.byText;
-        import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selenide.$;
 
 public class PatternTest {
+    private WebDriver driver;
+
     @BeforeAll
-    static void setUpAll(){
-        SelenideLogger.addListener("allure", new AllureSelenide());
-    }
-    @AfterAll
-    static  void tearDownAll(){
-        SelenideLogger.removeListener("allure");
+    public static void setUpAll() {
+        WebDriverManager.chromedriver().setup();
+        Selenide.open("http://localhost:9999");
     }
 
     @BeforeEach
-    public void setup() {
-        Selenide.open("http://localhost:9999");
+    void setup() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--headless");
+        driver = new ChromeDriver(options);
+        driver.get("http://localhost:9999");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        driver.quit();
+        driver = null;
     }
 
     @Test
